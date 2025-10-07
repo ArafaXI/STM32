@@ -1,0 +1,10 @@
+03:03:27 **** Incremental Build of configuration Debug for project ard_avionics_flightcomputer ****
+make -j16 all 
+arm-none-eabi-size  ard_avionics_flightcomputer.elf 
+   text	   data	    bss	    dec	    hex	filename
+  28352	     92	   2348	  30792	   7848	ard_avionics_flightcomputer.elf
+Finished building: default.size.stdout
+ 
+
+03:03:27 Build Finished. 0 errors, 0 warnings. (took 304ms)
+

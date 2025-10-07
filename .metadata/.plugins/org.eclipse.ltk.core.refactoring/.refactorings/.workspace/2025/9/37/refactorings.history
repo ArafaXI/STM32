@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;ard_avionics_flightcomputer&apos;" deleteContents="false" description="Delete resource &apos;ard_avionics_flightcomputer&apos;" element1="/ard_avionics_flightcomputer" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1757391323817"/>
+</session>

@@ -1,0 +1,10 @@
+03:03:26 **** Incremental Build of configuration Debug for project Mission Control ****
+make -j16 all 
+arm-none-eabi-size  Mission\ Control.elf 
+   text	   data	    bss	    dec	    hex	filename
+  16532	     12	   2060	  18604	   48ac	Mission Control.elf
+Finished building: default.size.stdout
+ 
+
+03:03:26 Build Finished. 0 errors, 0 warnings. (took 254ms)
+
