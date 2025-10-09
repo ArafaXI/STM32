@@ -31,7 +31,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -40,9 +39,15 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+TIM_HandleTypeDef htim4;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+uint16_t blink_delays[] = {500,250,100};
+uint8_t state = 0;
+uint8_t BTN_FLAG = 0;
+uint8_t TIM_FLAG = 0;
 
 /* USER CODE END PV */
 
@@ -50,6 +55,7 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_TIM4_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -73,6 +79,16 @@ static void MX_USART2_UART_Init(void);
 		return -1;
 	}
 
+	void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+
+	  }
+
+	void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+		TIM_FLAG = 1;
+	}
+
+
+
 /* USER CODE END 0 */
 
 /**
@@ -83,6 +99,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+
 
   /* USER CODE END 1 */
 
@@ -105,28 +122,34 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_TIM4_Init();
+  HAL_TIM_Base_Start_IT(&htim4);
   /* USER CODE BEGIN 2 */
   /* Private user code ---------------------------------------------------------*/
   /* USER CODE BEGIN 0 */
   printf("First App\r\n");
+
 
   /* USER CODE END 0 */
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint32_t now = 0, last = 0, loop_cnt = 0;
+  // uint32_t now = 0, next_blink = 500; // loop_cnt = 0;
   while (1)
   {
-	now = HAL_GetTick();
-	if(now - last >= 2000){
-	printf("Yeah works man, btw loop count is %ld\r\n", loop_cnt);
-    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-    last = now;
-    loop_cnt = 0;
-	}
+	  // now = HAL_GetTick();
 
-	loop_cnt++;
+
+	  if(BTN_FLAG){
+		  printf("Button Pressed\r\n");
+		  BTN_FLAG = 0;
+	  }
+
+	  if(TIM_FLAG){
+		  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		  TIM_FLAG = 0;
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -178,6 +201,51 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief TIM4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM4_Init(void)
+{
+
+  /* USER CODE BEGIN TIM4_Init 0 */
+
+  /* USER CODE END TIM4_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM4_Init 1 */
+
+  /* USER CODE END TIM4_Init 1 */
+  htim4.Instance = TIM4;
+  htim4.Init.Prescaler = 9999;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim4.Init.Period = 2499;
+  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM4_Init 2 */
+
+  /* USER CODE END TIM4_Init 2 */
+
 }
 
 /**
@@ -246,6 +314,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
