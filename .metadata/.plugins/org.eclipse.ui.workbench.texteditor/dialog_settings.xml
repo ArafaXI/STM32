@@ -3,6 +3,8 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="periodelapsedcallback"/>
+		<item value="period_elapsed"/>
 		<item value="hspi2"/>
 		<item value="i2c"/>
 		<item value="Hal_tim_pwm_start"/>
