@@ -22,12 +22,15 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <math.h>
 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define SAMPLE_DELAY 10
+#define SAMPLE_FREQ (1000/SAMPLE_DELAY)
+#define SAMPLE_MID (SAMPLE_RANGE/2)
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -46,7 +49,10 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+uint32_t led_channels[] = {TIM_CHANNEL_1, TIM_CHANNEL_2};
+float angles[] = {0,0};
+float angle_changes[] = {1*(2* M_PI/ SAMPLE_FREQ),2*(2* M_PI/ SAMPLE_FREQ)};
+uint32_t cb_counter = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -74,6 +80,22 @@ int _write(int fd, char* ptr, int len) {
   }
   return -1;
 }
+
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim){
+	if(htim -> Instance == TIM2){
+		for(int i = 0; i < sizeof(angles) / sizeof(angles[0]);i++){
+					  angles[i] += angle_changes[i];
+
+					  if(angles[i] >= 2*M_PI){
+						  angles[i] -= 2*M_PI;
+					  }
+					  __HAL_TIM_SET_COMPARE(&htim2,led_channels[i], SAMPLE_MID - (SAMPLE_MID * sin(angles[i])));
+
+				  }
+		cb_counter++;
+	}
+}
+
 
 /* USER CODE END 0 */
 
@@ -111,9 +133,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
   int now = 0;
   int delay = 1, next_send = 100;
+  uint32_t next_tick = 1000, loop_cnt = 0, next_sample = SAMPLE_DELAY;
   int pwm_change = 10;
   uint16_t pwm_value = 0;
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start_IT(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
 
   /* USER CODE END 2 */
@@ -122,18 +145,37 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  now = HAL_GetTick();
-	  if(now >= next_send){
-		  __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1, pwm_value);
-		  __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_2, pwm_value);
-		  pwm_value += pwm_change;
-		  if(pwm_value == 10000){
-			  pwm_change = -10;;
-		  } else if(pwm_value == 0){
-			  pwm_change = 10;
-		  }
-		  next_send = now + delay;
+	  now = uwTick;
+	  if (now>= next_tick){
+		  printf("Tick %d: %lu\, cb: %lu\r\n", now/1000, loop_cnt, cb_counter);
+		  loop_cnt = 0;
+		  next_tick = now + 1000;
 	  }
+
+//	  if(now >= next_sample){
+//		  for(int i = 0; i < sizeof(angles) / sizeof(angles[0]);i++){
+//			  angles[i] += angle_changes[i];
+//
+//			  if(angles[i] >= 2*M_PI){
+//				  angles[i] -= 2*M_PI;
+//			  }
+//			  __HAL_TIM_SET_COMPARE(&htim2,led_channels[i], SAMPLE_MID - (SAMPLE_MID * sin(angles[i])));
+//
+//		  }
+//		  next_sample = now + SAMPLE_DELAY;
+//	  }
+//	  if(now >= next_send){
+//		  __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1, pwm_value);
+//		  __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_2, pwm_value);
+//		  pwm_value += pwm_change;
+//		  if(pwm_value == 10000){
+//			  pwm_change = -10;;
+//		  } else if(pwm_value == 0){
+//			  pwm_change = 10;
+//		  }
+//		  next_send = now + delay;
+//	  }
+	  loop_cnt++;
 
 
 
@@ -211,7 +253,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 49;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 9999;
+  htim2.Init.Period = SAMPLE_RANGE - 1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)

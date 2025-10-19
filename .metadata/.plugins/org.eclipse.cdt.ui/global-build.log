@@ -1,21 +1,40 @@
-00:44:04 **** Incremental Build of configuration Debug for project STM32_PWM ****
+01:36:56 **** Incremental Build of configuration Debug for project STM32_PWM ****
 make -j16 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:150:54: warning: unknown escape sequence: '\,'
+  150 |                   printf("Tick %d: %lu\, cb: %lu\r\n", now/1000, loop_cnt, cb_counter);
+      |                                                      ^
+../Core/Src/main.c:138:12: warning: unused variable 'pwm_value' [-Wunused-variable]
+  138 |   uint16_t pwm_value = 0;
+      |            ^~~~~~~~~
+../Core/Src/main.c:137:7: warning: unused variable 'pwm_change' [-Wunused-variable]
+  137 |   int pwm_change = 10;
+      |       ^~~~~~~~~~
+../Core/Src/main.c:136:44: warning: unused variable 'next_sample' [-Wunused-variable]
+  136 |   uint32_t next_tick = 1000, loop_cnt = 0, next_sample = SAMPLE_DELAY;
+      |                                            ^~~~~~~~~~~
+../Core/Src/main.c:135:18: warning: unused variable 'next_send' [-Wunused-variable]
+  135 |   int delay = 1, next_send = 100;
+      |                  ^~~~~~~~~
+../Core/Src/main.c:135:7: warning: unused variable 'delay' [-Wunused-variable]
+  135 |   int delay = 1, next_send = 100;
+      |       ^~~~~
 arm-none-eabi-gcc -o "STM32_PWM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\SPN32 Projects\STM32_PWM\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_PWM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: STM32_PWM.elf
  
 arm-none-eabi-size  STM32_PWM.elf 
 arm-none-eabi-objdump -h -S STM32_PWM.elf  > "STM32_PWM.list"
    text	   data	    bss	    dec	    hex	filename
-  11340	     12	   1716	  13068	   330c	STM32_PWM.elf
+  24724	    120	   2064	  26908	   691c	STM32_PWM.elf
 Finished building: default.size.stdout
  
 Finished building: STM32_PWM.list
  
-00:44:08 **** Incremental Build of configuration Debug for project STM32_PWM ****
+01:36:59 **** Incremental Build of configuration Debug for project STM32_PWM ****
 make -j16 all 
 arm-none-eabi-size  STM32_PWM.elf 
    text	   data	    bss	    dec	    hex	filename
-  11340	     12	   1716	  13068	   330c	STM32_PWM.elf
+  24724	    120	   2064	  26908	   691c	STM32_PWM.elf
 Finished building: default.size.stdout
  

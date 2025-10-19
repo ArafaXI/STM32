@@ -1,7 +1,8 @@
-../Core/Src/main.c:65:5:_write	32	static
-../Core/Src/main.c:84:5:main	32	static
-../Core/Src/main.c:151:6:SystemClock_Config	88	static
-../Core/Src/main.c:198:13:MX_TIM2_Init	48	static
-../Core/Src/main.c:251:13:MX_USART2_UART_Init	8	static
-../Core/Src/main.c:284:13:MX_GPIO_Init	48	static
-../Core/Src/main.c:316:6:Error_Handler	4	static,ignoring_inline_asm
+../Core/Src/main.c:71:5:_write	32	static
+../Core/Src/main.c:84:6:HAL_TIM_PWM_PulseFinishedCallback	32	static
+../Core/Src/main.c:106:5:main	40	static
+../Core/Src/main.c:193:6:SystemClock_Config	88	static
+../Core/Src/main.c:240:13:MX_TIM2_Init	48	static
+../Core/Src/main.c:293:13:MX_USART2_UART_Init	8	static
+../Core/Src/main.c:326:13:MX_GPIO_Init	48	static
+../Core/Src/main.c:358:6:Error_Handler	4	static,ignoring_inline_asm
